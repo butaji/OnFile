@@ -7,7 +7,7 @@ namespace OnFile.Infra
 {
     public class Bootstrapper
     {
-        public static void Run()
+        public static void Run<T>(T application)
         {
             var bus = new FakeBus();
 
@@ -19,7 +19,7 @@ namespace OnFile.Infra
             bus.RegisterHandler<ChangeCustomerInfoCommand>(commands.Handle);
             bus.RegisterHandler<RemoveCustomerCommand>(commands.Handle);
 
-            var data = new MemoryData();
+            var data = new MemoryData(typeof(T).FullName);
 
             var events = new CustomerEventsHandler(data);
             bus.RegisterHandler<CustomerCreated>(events.Handle);

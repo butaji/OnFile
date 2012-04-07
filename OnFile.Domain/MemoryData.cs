@@ -7,6 +7,13 @@ namespace OnFile.Domain
 {
     public class MemoryData : IData<CustomerReadModel>
     {
+        private readonly string _name;
+
+        public MemoryData(string name)
+        {
+            _name = name;
+        }
+
         private DateTimeOffset? _lastChange;
 
         private readonly List<CustomerReadModel> Customers = new List<CustomerReadModel>();

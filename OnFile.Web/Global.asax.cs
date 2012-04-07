@@ -1,8 +1,10 @@
-﻿using System.Web.Http;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using OnFile.Infra;
+using OnFile.Web.Controllers;
+using OnFile.Web.Models;
+using ServiceStack.WebHost.Endpoints;
 
 namespace OnFile.Web
 {
@@ -20,11 +22,8 @@ namespace OnFile.Web
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+            routes.IgnoreRoute("api/{*pathInfo}");
+            routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
 
             routes.MapRoute(
                 name: "Default",
@@ -35,6 +34,8 @@ namespace OnFile.Web
 
         protected void Application_Start()
         {
+            new AppHost().Init();
+            
             AreaRegistration.RegisterAllAreas();
 
             RegisterGlobalFilters(GlobalFilters.Filters);
@@ -42,7 +43,22 @@ namespace OnFile.Web
 
             BundleTable.Bundles.RegisterTemplateBundles();
 
-            Bootstrapper.Run();
+            Bootstrapper.Run(this);
+        }
+    }
+
+    public class AppHost : AppHostBase
+    {
+        public AppHost() : base("CustomersController", typeof(CustomersController).Assembly) { }
+
+        public override void Configure(Funq.Container container)
+        {
+            ServiceStack.Text.JsConfig.EmitCamelCaseNames = true;
+            ServiceStack.Text.JsConfig.IncludeNullValues = true;
+            ServiceStack.Text.JsConfig.ThrowOnDeserializationError = true;
+
+            Routes
+              .Add<CustomersResponse>("/customers");
         }
     }
 }

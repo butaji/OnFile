@@ -12,24 +12,29 @@
                         dataSource = new kendo.data.DataSource({
                             transport: {
                                 read: {
-                                    type: "GET", 
+                                    cache: false,
+                                    type: "GET",
+                                    dataType: "json",
                                     url: crudServiceBaseUrl + "/customers"
                                 },
                                 update: {
                                     type: "PUT",
+                                    dataType: "json",
                                     url: crudServiceBaseUrl + "/customers"
                                 },
                                 destroy: {
                                     type: "DELETE",
+                                    dataType: "json",
                                     url: crudServiceBaseUrl + "/customers"
                                 },
                                 create: {
+                                    dataType: "json",
                                     type: "POST",
                                     url: crudServiceBaseUrl + "/customers"
                                 },
                                 parameterMap: function (options, operation) {
                                     if (operation !== "read" && options.models) {
-                                        return { models: kendo.stringify(options.models) };
+                                        return { Customers: kendo.stringify(options.models) };
                                     }
                                 }
                             },
@@ -37,12 +42,12 @@
                             pageSize: 30,
                             schema: {
                                 model: {
-                                    id: "Id",
+                                    id: "id",
                                     fields: {
-                                        Name: { editable: true, nullable: true },
-                                        Phone: { editable: true, nullable: true },
-                                        Address: { editable: true, nullable: true },
-                                        Email: { editable: true, nullable: true }
+                                        name: { editable: true, nullable: true },
+                                        phone: { editable: true, nullable: true },
+                                        address: { editable: true, nullable: true },
+                                        email: { editable: true, nullable: true }
                                     }
                                 }
                             }
@@ -54,11 +59,10 @@
                 pageable: true,
                 toolbar: ["create", "save", "cancel"],
                 columns: [
-                            { field: "Id", title: "Id" },
-                            { field: "Name", title: "Name" },
-                            { field: "Phone", title: "Phone" },
-                            { field: "Address", title: "Address" },
-                            { field: "Email", title: "Email" },
+                            "name",
+                            { field: "phone", title: "Phone" },
+                            { field: "address", title: "Address" },
+                            { field: "email", title: "Email" },
                             { command: "destroy", title: "&nbsp;", width: 110}],
                 editable: true
             });

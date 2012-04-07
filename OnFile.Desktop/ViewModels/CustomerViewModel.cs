@@ -1,8 +1,9 @@
 ﻿using System;
+using OnFile.Desktop.ViewModels;
 using OnFile.Domain;
 using ServiceStack.Text;
 
-namespace OnFile.Desktop.ViewModels
+namespace OnFile.Infra
 {
     public class CustomerViewModel : ViewModel
     {
@@ -34,7 +35,6 @@ namespace OnFile.Desktop.ViewModels
             set { SetField(ref _address, value, "Address"); }
         }
 
-        private string _email;
         private int _version;
 
         public string Email
@@ -43,6 +43,7 @@ namespace OnFile.Desktop.ViewModels
             set { SetField(ref _email, value, "Email"); }
         }
 
+        private string _email;
         public int Version
         {
             get

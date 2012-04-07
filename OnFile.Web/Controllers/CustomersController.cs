@@ -1,41 +1,123 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Http;
+using System.ComponentModel;
+using System.Linq;
+using System.Web;
 using OnFile.Domain;
 using OnFile.Infra;
+using OnFile.Web.Models;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+using ServiceStack.Text;
+using HttpRequestWrapper = ServiceStack.WebHost.Endpoints.Extensions.HttpRequestWrapper;
 
 namespace OnFile.Web.Controllers
 {
-    public class CustomersController : ApiController
+    public class CustomersController : ServiceBase<CustomersResponse>
     {
-        // GET /api/<controller>
-        public IEnumerable<CustomerReadModel> Get()
+        private object Get(CustomersResponse request)
         {
             return ServiceLocator.Instance.Data.GetCustomers();
         }
 
-        // GET /api/<controller>/5
-        public CustomerReadModel Get(int id)
+        private object Put(CustomersResponse request)
         {
-            throw new NotImplementedException();
+            var customers = ServiceLocator.Instance.Data.GetCustomers();
+
+            var bus = ServiceLocator.Instance.Bus;
+            foreach (var @new in request.Customers)
+            {
+                var old = customers.First(x => x.Id == @new.Id);
+
+                var changes = GetChanges(old, @new);
+
+                foreach (var change in changes)
+                {
+                    bus.Send(change);
+                }
+            }
+
+            return request;
         }
 
-        // POST /api/<controller>
-        public void Post(string value)
+        private IEnumerable<ChangeCustomerInfoCommand> GetChanges(
+            CustomerReadModel old, CustomerReadModel @new)
         {
-            throw new NotImplementedException();
+            var props = TypeDescriptor.GetProperties(typeof(CustomerReadModel));
+            foreach (PropertyDescriptor prop in props)
+            {
+                var oldValue = prop.GetValue(old);
+                var newValue = prop.GetValue(@new);
+
+                if (!object.Equals(oldValue,newValue))
+                    yield return new ChangeCustomerInfoCommand(
+                        @new.Id, prop.Name, newValue, old.Version);
+            }
         }
 
-        // PUT /api/<controller>/5
-        public void Put(int id, string value)
+        private object Post(CustomersResponse request)
         {
-            throw new NotImplementedException();
+            foreach (var customer in request.Customers)
+            {
+                ServiceLocator.Instance.Bus.Send(new CreateCustomerCommand(
+                    Guid.NewGuid(), customer.Name, customer.Address,
+                                   customer.Phone, customer.Email));
+            }
+
+            return request;
         }
 
-        // DELETE /api/<controller>/5
-        public void Delete(int id)
+        private object Delete(CustomersResponse request)
         {
-            throw new NotImplementedException();
+            foreach (var customer in request.Customers)
+            {
+                ServiceLocator.Instance.Bus.Send(new RemoveCustomerCommand(
+                    customer.Id, customer.Version));
+            }
+
+            return request;
+        }
+
+
+        protected override object Run(CustomersResponse request)
+        {
+            var httpReq = base.RequestContext.Get<IHttpRequest>();
+            var aspNetRequest = ((HttpRequestWrapper)httpReq).Request;
+
+            return RouteTo(aspNetRequest.RequestType, request);
+        }
+
+        private object RouteTo(string requestType, CustomersResponse request)
+        {
+            switch (requestType)
+            {
+                case "GET":
+                    return Get(Check(request));
+
+                case "POST":
+                    return Post(Check(request));
+
+                case "PUT":
+                    return Put(Check(request));
+
+                case "DELETE":
+                    return Delete(Check(request));
+
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+
+        private CustomersResponse Check(CustomersResponse request)
+        {
+            var httpReq = base.RequestContext.Get<IHttpRequest>();
+            var aspNetRequest = ((HttpRequestWrapper)httpReq).Request;
+            var json = HttpUtility.UrlDecode(aspNetRequest["Customers"]);
+
+            request.Customers = json.FromJson<List<CustomerReadModel>>();
+
+            return request;
         }
     }
 }

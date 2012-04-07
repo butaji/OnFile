@@ -9,8 +9,7 @@ namespace OnFile.Desktop
         {
             base.OnStartup(e);
 
-            Bootstrapper.Run();
-
+            Bootstrapper.Run(this);
         }
     }
 }
