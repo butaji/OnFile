@@ -12,7 +12,10 @@ namespace OnFile.Infra
 
         public static ServiceLocator Instance
         {
-            get { return _instance; }
+            get
+            {
+                return _instance;
+            }
         }
     }
 }

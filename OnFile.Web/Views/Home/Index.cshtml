@@ -1,18 +1,67 @@
-﻿@model dynamic
-
-@{
-    Layout = "../Shared/_Layout.cshtml";
+﻿@{
+    ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<h2>@ViewBag.Title</h2>
+<div id="example" class="k-content">
+    <div id="grid">
+    </div>
+    <script>
+        $(document).ready(function () {
+            var crudServiceBaseUrl = "/api",
+                        dataSource = new kendo.data.DataSource({
+                            transport: {
+                                read: {
+                                    type: "GET", 
+                                    url: crudServiceBaseUrl + "/customers"
+                                },
+                                update: {
+                                    type: "PUT",
+                                    url: crudServiceBaseUrl + "/customers"
+                                },
+                                destroy: {
+                                    type: "DELETE",
+                                    url: crudServiceBaseUrl + "/customers"
+                                },
+                                create: {
+                                    type: "POST",
+                                    url: crudServiceBaseUrl + "/customers"
+                                },
+                                parameterMap: function (options, operation) {
+                                    if (operation !== "read" && options.models) {
+                                        return { models: kendo.stringify(options.models) };
+                                    }
+                                }
+                            },
+                            batch: true,
+                            pageSize: 30,
+                            schema: {
+                                model: {
+                                    id: "Id",
+                                    fields: {
+                                        Name: { editable: true, nullable: true },
+                                        Phone: { editable: true, nullable: true },
+                                        Address: { editable: true, nullable: true },
+                                        Email: { editable: true, nullable: true }
+                                    }
+                                }
+                            }
+                        });
 
-<!DOCTYPE html>
-
-<html>
-    <head>
-        <title>title</title>
-    </head>
-    <body>
-        <div>
-              
-        </div>
-    </body>
-</html>
+            $("#grid").kendoGrid({
+                dataSource: dataSource,
+                navigatable: true,
+                pageable: true,
+                toolbar: ["create", "save", "cancel"],
+                columns: [
+                            { field: "Id", title: "Id" },
+                            { field: "Name", title: "Name" },
+                            { field: "Phone", title: "Phone" },
+                            { field: "Address", title: "Address" },
+                            { field: "Email", title: "Email" },
+                            { command: "destroy", title: "&nbsp;", width: 110}],
+                editable: true
+            });
+        });
+    </script>
+</div>
