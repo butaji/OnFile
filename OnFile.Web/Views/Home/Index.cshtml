@@ -8,62 +8,86 @@
     </div>
     <script>
         $(document).ready(function () {
+
+            $.ajaxSetup({ cache: false});
+
+            $('.k-grid-refresh').attr('disabled', 'disabled');
+
+            var lastDate;
+
+            setInterval(function() {
+                $.get("@Url.Action("Updated")", function(result) {
+                
+                    $('.k-grid-refresh').attr('disabled', Date.parse(result) > lastDate ? '' : 'disabled');
+
+                    lastDate = new Date();
+                
+                });
+            }, 5000);
+            
+      
+      
+      
             var crudServiceBaseUrl = "/api",
-                        dataSource = new kendo.data.DataSource({
-                            transport: {
-                                read: {
-                                    cache: false,
-                                    type: "GET",
-                                    dataType: "json",
-                                    url: crudServiceBaseUrl + "/customers"
-                                },
-                                update: {
-                                    type: "PUT",
-                                    dataType: "json",
-                                    url: crudServiceBaseUrl + "/customers"
-                                },
-                                destroy: {
-                                    type: "DELETE",
-                                    dataType: "json",
-                                    url: crudServiceBaseUrl + "/customers"
-                                },
-                                create: {
-                                    dataType: "json",
-                                    type: "POST",
-                                    url: crudServiceBaseUrl + "/customers"
-                                },
-                                parameterMap: function (options, operation) {
-                                    if (operation !== "read" && options.models) {
-                                        return { Customers: kendo.stringify(options.models) };
-                                    }
-                                }
-                            },
-                            batch: true,
-                            pageSize: 30,
-                            schema: {
-                                model: {
-                                    id: "id",
-                                    fields: {
-                                        name: { editable: true, nullable: true },
-                                        phone: { editable: true, nullable: true },
-                                        address: { editable: true, nullable: true },
-                                        email: { editable: true, nullable: true }
-                                    }
-                                }
+                dataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            cache: false,
+                            type: "GET",
+                            dataType: "json",
+                            url: crudServiceBaseUrl + "/customers"
+                        },
+                        update: {
+                            type: "PUT",
+                            dataType: "json",
+                            url: crudServiceBaseUrl + "/customers"
+                        },
+                        destroy: {
+                            type: "DELETE",
+                            dataType: "json",
+                            url: crudServiceBaseUrl + "/customers"
+                        },
+                        create: {
+                            dataType: "json",
+                            type: "POST",
+                            url: crudServiceBaseUrl + "/customers"
+                        },
+                        parameterMap: function (options, operation) {
+                            if (operation !== "read" && options.models) {
+                                return { Customers: kendo.stringify(options.models) };
                             }
-                        });
+                        }
+                    },
+                    batch: true,
+                    pageSize: 30,
+                    schema: {
+                        model: {
+                            id: "id",
+                            fields: {
+                                name: { editable: true, nullable: true },
+                                phone: { editable: true, nullable: true },
+                                address: { editable: true, nullable: true },
+                                email: { editable: true, nullable: true }
+                            }
+                        }
+                    }
+                });
 
             $("#grid").kendoGrid({
                 dataSource: dataSource,
                 navigatable: true,
                 pageable: true,
-                toolbar: ["create", "save", "cancel"],
+                toolbar: ["create", "save", "cancel", {
+                    text: "Refresh",
+                    className: "k-grid-refresh",
+                    imageClass: "k-add"
+                }],
                 columns: [
-                            "name",
-                            { field: "phone", title: "Phone" },
-                            { field: "address", title: "Address" },
-                            { field: "email", title: "Email" },
-                            { command: "destroy", title: "&nbsp;", width: 110}],
+                    "name",
+                    { field: "phone", title: "Phone" },
+                    { field: "address", title: "Address" },
+                    { field: "email", title: "Email" },
+                    { command: "destroy", title: "&nbsp;", width: 110}],
                 editable: true
             });
         });

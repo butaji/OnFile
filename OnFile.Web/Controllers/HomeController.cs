@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
+using OnFile.Infra;
 
 namespace OnFile.Web.Controllers
 {
@@ -9,5 +11,11 @@ namespace OnFile.Web.Controllers
             return View();
         }
 
+        public JsonResult Updated()
+        {
+            var updated = ServiceLocator.Instance.Data.GetLastChangesdate();
+
+            return Json(updated, JsonRequestBehavior.AllowGet);
+        }
     }
 }
