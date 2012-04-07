@@ -23,13 +23,16 @@
                     lastDate = new Date();
                 
                 });
-            }, 5000);
-            
+            }, 5000);      
       
+
+            $(".k-grid-refresh").click(function () {
+                dataSource.read();
+                return false;
+            });
       
-      
-            var crudServiceBaseUrl = "/api",
-                dataSource = new kendo.data.DataSource({
+            var crudServiceBaseUrl = "/api";
+             var dataSource = new kendo.data.DataSource({
                     transport: {
                         read: {
                             cache: false,
@@ -90,6 +93,8 @@
                     { command: "destroy", title: "&nbsp;", width: 110}],
                 editable: true
             });
+
+
         });
     </script>
 </div>
