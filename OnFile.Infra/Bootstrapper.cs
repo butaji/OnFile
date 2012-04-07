@@ -1,6 +1,6 @@
-﻿using OnFile.Desktop.Properties;
-using OnFile.Domain;
+﻿using OnFile.Domain;
 using OnFile.Domain.Events;
+using OnFile.Infra.Properties;
 using OnFile.Storage;
 
 namespace OnFile.Infra

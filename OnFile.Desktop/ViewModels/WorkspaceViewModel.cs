@@ -88,9 +88,9 @@ namespace OnFile.Desktop.ViewModels
                 }
 
                 _commands.Clear();
-            });
 
-            RefreshData();
+                RefreshData();
+            });
         }
 
         private void Add()

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OnFile.Desktop.Properties {
+namespace OnFile.Infra.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -23,15 +23,12 @@ namespace OnFile.Desktop.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("c:\\src\\OnFile\\archive\\")]
         public string WorkDir {
             get {
                 return ((string)(this["WorkDir"]));
-            }
-            set {
-                this["WorkDir"] = value;
             }
         }
     }

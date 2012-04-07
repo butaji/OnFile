@@ -41,7 +41,6 @@ namespace OnFile.Storage
             }
         }
 
-
         void ProcessCatalog(string sDir, List<Event> events)
         {
             foreach (var d in Directory.GetDirectories(sDir))
@@ -51,43 +50,23 @@ namespace OnFile.Storage
             }
         }
 
-        private Event ReadEventFromPath(string path)
-        {
-            var fileName = new FileInfo(path).Name;
-            var token = fileName.IndexOf("_");
-            var json = fileName.IndexOf(".json");
-            var typeName = fileName.Substring(token + 1, json - token - 1);
-
-            var text = File.ReadAllText(path);
-            var type = Assembly.Load("OnFile.Domain").GetType(typeName, true);
-            var @event = (Event)JsonSerializer.DeserializeFromString(text, type);
-            return @event;
-        }
-
         public void SaveEvents(Guid aggregateId, IEnumerable<Event> events, int expectedVersion)
         {
             _watcher.EnableRaisingEvents = false;
-            
+
             var path = _workDir + "\\" + aggregateId + "\\" + expectedVersion;
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
             foreach (var @event in events)
             {
-                var file = string.Format("{0}\\{1}_{2}.json", path, DateTime.Now.Ticks,
-                    @event.GetType().FullName);
-                SavePackage(file, @event);
+                var file = string.Format("{0}\\{1}.json", path, DateTime.Now.Ticks);
+                SaveEvent(file, @event, aggregateId, expectedVersion);
 
                 _bus.Publish(@event);
             }
 
             _watcher.EnableRaisingEvents = true;
-        }
-
-        private void SavePackage(string file, Event @event)
-        {
-            var json = JsonSerializer.SerializeToString(@event, @event.GetType());
-            File.WriteAllText(file, json);
         }
 
         public List<Event> GetEventsForAggregate(Guid aggregateId)
@@ -98,5 +77,44 @@ namespace OnFile.Storage
             ProcessCatalog(path, result);
             return result;
         }
+
+        private void SaveEvent(string file, Event @event, Guid aggregateId, int expectedVersion)
+        {
+            SavePackage(file, new EventDescriptor(aggregateId, @event, expectedVersion));
+        }
+
+        private void SavePackage(string file, EventDescriptor package)
+        {
+            var json = package.ToJson();
+            File.WriteAllText(file, json);
+        }
+
+        private Event ReadEventFromPath(string path)
+        {
+            var text = File.ReadAllText(path);
+            var desr = text.FromJson<EventDescriptor>();
+
+            return desr.EventData;
+        }
+
+        public class EventDescriptor
+        {
+            public Guid Id { get; set; }
+            public dynamic EventData { get; set; }
+            public int Version { get; set; }
+
+            public EventDescriptor()
+            {
+            }
+
+            public EventDescriptor(Guid id, Event eventData, int version)
+            {
+                EventData = eventData;
+                Version = version;
+                Id = id;
+            }
+        }
+
     }
+
 }
