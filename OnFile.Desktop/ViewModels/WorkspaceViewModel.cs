@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using OnFile.Desktop.Helpers;
 using OnFile.Domain;
+using OnFile.Infra;
 
 namespace OnFile.Desktop.ViewModels
 {
@@ -46,24 +47,28 @@ namespace OnFile.Desktop.ViewModels
 
         private bool CanLoadChanges()
         {
-            var dateTimeOffset = ServiceLocator.Data.GetLastChangesdate();
+            var dateTimeOffset = ServiceLocator.Instance.Data.GetLastChangesdate();
             return dateTimeOffset > Changed;
         }
 
         private void RefreshData()
         {
-            _customers.Clear();
+            ThreadPool.QueueUserWorkItem(t => Application.Current
+                .Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    _customers.Clear();
 
-            var customers = ServiceLocator.Data.GetCustomers().Select(CustomerViewModel.Create);
-            foreach (var customer in customers)
-            {
-                customer.PropertyChanged += CustomerPropertyChanged;
-                _customers.Add(customer);
-            }
+                    var customers = ServiceLocator.Instance.Data.GetCustomers().Select(CustomerViewModel.Create);
+                    foreach (var customer in customers)
+                    {
+                        customer.PropertyChanged += CustomerPropertyChanged;
+                        _customers.Add(customer);
+                    }
 
-            _commands.Clear();
+                    _commands.Clear();
 
-            Changed = ServiceLocator.Data.GetLastChangesdate();
+                    Changed = ServiceLocator.Instance.Data.GetLastChangesdate();
+                })));
         }
 
         private void Discard()
@@ -79,13 +84,13 @@ namespace OnFile.Desktop.ViewModels
             {
                 foreach (var command in _commands)
                 {
-                    ServiceLocator.Bus.Send(command);
+                    ServiceLocator.Instance.Bus.Send(command);
                 }
 
                 _commands.Clear();
-
-                Application.Current.Dispatcher.BeginInvoke(new Action(RefreshData));
             });
+
+            RefreshData();
         }
 
         private void Add()
