@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="Commands\ChangeCustomerInfoCommand.cs" />
-    <Compile Include="CustomerEventsHandler.cs" />
+    <Compile Include="Events\CustomerEventsHandler.cs" />
     <Compile Include="Events\CustomerCreated.cs" />
     <Compile Include="Events\CustomerDeleted.cs" />
     <Compile Include="Events\CustomerInfoChanged.cs" />
@@ -50,7 +50,7 @@
     <Compile Include="Command.cs" />
     <Compile Include="Commands\CreateCustomerCommand.cs" />
     <Compile Include="Customer.cs" />
-    <Compile Include="CustomerCommandHandlers.cs" />
+    <Compile Include="Commands\CustomerCommandHandlers.cs" />
     <Compile Include="CustomerViewModel.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="FakeBus.cs" />
