@@ -3,9 +3,9 @@
 namespace OnFile.Domain
 {
     public class CustomerEventsHandler : 
-        Handles<CustomerCreated>,
-        Handles<CustomerInfoChanged>,
-        Handles<CustomerDeleted> 
+        IHandles<CustomerCreated>,
+        IHandles<CustomerInfoChanged>,
+        IHandles<CustomerDeleted> 
     {
         private readonly MemoryData _storage;
 

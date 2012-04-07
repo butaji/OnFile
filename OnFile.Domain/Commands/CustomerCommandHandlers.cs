@@ -3,9 +3,9 @@
 namespace OnFile.Domain
 {
     public class CustomerCommandHandlers :
-        Handles<CreateCustomerCommand>,
-        Handles<ChangeCustomerInfoCommand>,
-        Handles<RemoveCustomerCommand>
+        IHandles<CreateCustomerCommand>,
+        IHandles<ChangeCustomerInfoCommand>,
+        IHandles<RemoveCustomerCommand>
     {
         private readonly IRepository<Customer> _rep;
 

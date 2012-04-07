@@ -51,13 +51,13 @@
     <Compile Include="Commands\CreateCustomerCommand.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="Commands\CustomerCommandHandlers.cs" />
-    <Compile Include="CustomerViewModel.cs" />
+    <Compile Include="CustomerReadModel.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="FakeBus.cs" />
     <Compile Include="ICommandSender.cs" />
     <Compile Include="IEventPublisher.cs" />
     <Compile Include="IEventStore.cs" />
-    <Compile Include="IBus.cs" />
+    <Compile Include="IHandles.cs" />
     <Compile Include="IData.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="MemoryData.cs" />

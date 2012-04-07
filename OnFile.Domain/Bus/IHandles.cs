@@ -1,6 +1,6 @@
 ﻿namespace OnFile.Domain
 {
-    public interface Handles<T>
+    public interface IHandles<T>
     {
         void Handle(T message);
     }
