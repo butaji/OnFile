@@ -1,10 +1,10 @@
 ﻿using System.Web.Mvc;
-using System.Web.Optimization;
 using System.Web.Routing;
 using OnFile.Infra;
 using OnFile.Web.Controllers;
 using OnFile.Web.Models;
 using ServiceStack.WebHost.Endpoints;
+using System.Web.Optimization;
 
 namespace OnFile.Web
 {
@@ -40,7 +40,6 @@ namespace OnFile.Web
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
-
             BundleTable.Bundles.RegisterTemplateBundles();
 
             Bootstrapper.Run(this);
