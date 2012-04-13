@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace OnFile.Domain
+namespace OnFile.Domain.ReadModel
 {
     public class MemoryData : IData<CustomerReadModel>
     {
@@ -50,7 +50,7 @@ namespace OnFile.Domain
 
             var prop = TypeDescriptor.GetProperties(customer).Find(name, true);
             prop.SetValue(customer, value);
-            
+
             customer.Version = version;
 
             _lastChange = DateTime.Now;

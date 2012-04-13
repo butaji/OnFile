@@ -31,7 +31,7 @@ namespace OnFile.Domain
         public void Change(string name, object value)
         {
             if (_deleted) throw new MethodAccessException();
-            ApplyChange(new CustomerInfoChanged(_id, name, value, Version++));
+            ApplyChange(new CustomerInfoChanged(_id, name, value, ++Version));
         }
 
         public void Delete()

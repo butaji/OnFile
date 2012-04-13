@@ -25,10 +25,8 @@ namespace OnFile.Web
             routes.IgnoreRoute("api/{*pathInfo}");
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
 
-            routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+            routes.MapRoute("Default", "{controller}/{action}/{id}", 
+                new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
         }
 

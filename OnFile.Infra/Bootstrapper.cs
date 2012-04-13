@@ -1,5 +1,6 @@
 ﻿using OnFile.Domain;
 using OnFile.Domain.Events;
+using OnFile.Domain.ReadModel;
 using OnFile.Infra.Properties;
 using OnFile.Storage;
 

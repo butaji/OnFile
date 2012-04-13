@@ -1,6 +1,6 @@
-﻿using OnFile.Domain.Events;
+﻿using OnFile.Domain.ReadModel;
 
-namespace OnFile.Domain
+namespace OnFile.Domain.Events
 {
     public class CustomerEventsHandler : 
         IHandles<CustomerCreated>,
